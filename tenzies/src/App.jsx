@@ -1,33 +1,99 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+//import reactLogo from './assets/react.svg'
+//import viteLogo from '/vite.svg'
+import Die from "./components/Die"
 import './App.css'
+import {nanoid} from "nanoid"
+import Confetti from "react-confetti"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [dice, setDice] = useState(allNewDice())
+  const [tenzies, setTenzies] = useState(false)
+
+  useEffect(() => {
+    const allHeld = dice.every(die => die.isHeld)
+    const firstValue = dice[0].value
+    const allSameValue = dice.every(die => die.value === firstValue)
+    if (allHeld && allSameValue) {
+        setTenzies(true)
+        console.log("You Won")
+    }
+  }, [dice])
+
+  function generateNewDie() {
+    return {
+        value: Math.ceil(Math.random() * 6),
+        isHeld: false,
+        id: nanoid()
+    }
+  }
+
+  function allNewDice() {
+    const newDice = []
+    for (let i = 0; i < 10; i++) {
+        newDice.push(generateNewDie())
+    }
+    return newDice
+  }
+
+  function holdDice(id) {
+    setDice(oldDice => oldDice.map(die => {
+      return (id === die.id) ? 
+        {
+          ...die,
+          isHeld: !die.isHeld
+        } :
+        die
+    }))
+  }
+
+  function rollDice() {
+    if (tenzies) {
+      console.log("you Won, you want a new game?")
+      setTenzies(false)
+      setDice(allNewDice())      //setDice(generateNewDie())
+    } else {
+      setDice(oldDice => oldDice.map(die => {
+        return (die.isHeld === true) ?
+          die :
+          generateNewDie()
+      }))
+    }
+    
+  }
+
+
+  function allNewDice() {
+    const newDice = [];
+
+    while (newDice.length < 10) {
+    // Generate random numbers between 1 and 6
+      newDice.push(generateNewDie())
+    }
+    return newDice;
+  }
+
+  
+
+  let diceElements = dice.map(die => <Die holdDice={() => holdDice(die.id)} isHeld={die.isHeld} key={die.id} value={die.value} />)
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <main>
+        {tenzies && <Confetti />}
+        <h1 className="title">Tenzies</h1>
+        <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+        <div className="dice-container">
+          {diceElements}      
+        </div>
+        <button 
+          className='dice-roll'
+          onClick={rollDice}
+        >
+          {tenzies ? "New Game" : "Roll"}
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      </main>
     </>
   )
 }
