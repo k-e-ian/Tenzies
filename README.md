@@ -69,4 +69,4 @@ Your contributions are greatly appreciated!
 
 ## New Features by me
 
-    Check the NEW_FEATURES.md file to see the features that have been added to this game. Feel free to Contribute(or suggest new features) that'll make this game more tenzy ;)
+Check the NEW_FEATURES.md file to see the features that have been added to this game. Feel free to Contribute(or suggest new features) that'll make this game more tenzy ;)

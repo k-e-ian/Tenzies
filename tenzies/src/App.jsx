@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
     const firstValue = dice[0].value;
-    console.log(firstValue)
+    
     const allSameValue = dice.every((die) => die.value === firstValue);
 
     if (allHeld && allSameValue && !tenzies) {
