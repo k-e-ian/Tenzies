@@ -51,10 +51,13 @@ main {
   cursor: pointer;
 }
 
-
-
-.die-num {
-  font-size: 2rem;
+.die-dots {
+  display: flex; /* Use flexbox to align dots */
+  justify-content: space-around; /* Center dots horizontally */
+  align-items: center; /* Center dots vertically */  
+  font-size: 4rem;
+  height: 100%;
+  width: 100%;
 }
 
 .dice-roll {
@@ -76,3 +79,4 @@ main {
 .dice-roll:active {
   box-shadow: inset 5px 5px 10px -3px rgba(0, 0, 0, 0.7);
 }
+
