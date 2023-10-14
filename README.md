@@ -3,7 +3,7 @@
 Tenzies is a simple and fun dice game where your objective is to roll the dice and try to get all of them to show the same number. This game also keeps track of your performance, including the number of rolls and the time taken to win.
 
 ## Tenzies Screenshot
-![Tenzies Screenshot](/public/Tenzies.png)
+![Tenzies Screenshot](./tenzies/public/Tenzies.png)
 
 
 ## How to Play
