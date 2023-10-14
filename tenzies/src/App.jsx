@@ -10,17 +10,35 @@ function App() {
   const [rollCount, setRollCount] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [highScore, setHighScore] = useState(getHighScoreFromLocalStorage());
+
 
   useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
     const firstValue = dice[0].value;
+    console.log(firstValue)
     const allSameValue = dice.every((die) => die.value === firstValue);
 
     if (allHeld && allSameValue && !tenzies) {
       setTenzies(true);
       setIsRunning(false);
+
+      let currentScore = {
+        rolls: rollCount,
+        time: {
+          minutes: elapsedMinutes,
+          seconds: elapsedSeconds
+        },
+        value: firstValue 
+      }
+      let savedHighScore = getHighScoreFromLocalStorage()
+      
+      if (!savedHighScore || isBetterScore(currentScore, savedHighScore)) {
+        setHighScore(currentScore)
+        saveHighScoreToLocalStorage(currentScore)
+      } 
     }
-  }, [dice, tenzies]);
+  }, [dice, tenzies, rollCount, elapsedTime]);
 
   useEffect(() => {
     let interval;
@@ -58,7 +76,6 @@ function App() {
     }
     setDice((oldDice) =>
       oldDice.map((die) => {
-        console.log(die.value)
         return id === die.id
           ? {
               ...die,
@@ -103,6 +120,29 @@ function App() {
   const elapsedMinutes = Math.floor(elapsedTime / 60000);
   const elapsedSeconds = Math.floor((elapsedTime % 60000) / 1000);
 
+  function getHighScoreFromLocalStorage() {
+    const highScoreString = localStorage.getItem('highScore');
+    return highScoreString ? JSON.parse(highScoreString) : null;
+  }
+  
+  function saveHighScoreToLocalStorage(highScore) {
+    localStorage.setItem('highScore', JSON.stringify(highScore));
+  }
+  
+  function isBetterScore(currentScore, savedScore) {
+    // Compare based on rolls or time
+    if (currentScore.rolls < savedScore.rolls) {
+      return true;
+    } else if (currentScore.rolls === savedScore.rolls) {
+      if (currentScore.time.minutes < savedScore.time.minutes) {
+        return true;
+      } else if (currentScore.time.minutes === savedScore.time.minutes) {
+        return currentScore.time.seconds < savedScore.time.seconds;
+      }
+    }
+    return false;
+  }
+
   return (
     <main>
       {tenzies && <Confetti />}
@@ -110,9 +150,11 @@ function App() {
       <p className="instructions">
         Roll until all dice are the same. Click each die to freeze it at its current value between rolls.
       <br/>
-      <br/>
       <small className="instructions-italic">Game Starts at dice-roll or die-freeze instance.</small>
       </p>
+      <small style={{fontFamily: 'Inter'}}>
+        High Score: rolls[{highScore?.rolls}], time[{highScore?.time?.minutes}m {highScore?.time?.seconds}s], value[{highScore?.value}]
+      </small>
       <div className="dice-container">{diceElements}</div>
       <button className="dice-roll" onClick={rollDice}>
         {tenzies ? 'New Game' : 'Roll'}
